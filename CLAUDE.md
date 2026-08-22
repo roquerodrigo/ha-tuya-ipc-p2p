@@ -99,7 +99,7 @@ While a session is up the vendor app cannot connect, and vice versa. That is
 what the `keep_connected` option trades, and why the on-demand path releases the
 session a minute after the last viewer leaves.
 
-### The stream source has to be H.264, and has to be paced
+### The stream source has to be H.264, paced, and square-pixelled
 
 The device only ever produces MJPEG. Home Assistant's own preview and snapshots
 take that as it is, but everything reached through `stream_source` is a
@@ -113,6 +113,13 @@ camera goes quiet. A JPEG sequence carries no timestamps, so an encoder given
 frames as they happen invents a rate and stream time runs several times faster
 than the clock — the picture plays back at a sprint and HomeKit rejects what it
 did not negotiate.
+
+It also forces **square pixels** (`-vf setsar=1`). The camera writes a JFIF
+density of 640x480 in "aspect ratio" units, which decodes as a pixel aspect
+ratio of 4:3, so a 640x480 frame claims a 16:9 display and every player
+stretches it. Snapshots never show the fault — an `<img>` ignores the field —
+so this only ever surfaces once the stream plays, which is what makes it easy
+to reintroduce.
 
 Nothing binds a port or spawns an encoder until `stream_source` is called, and
 one encoder runs per consumer rather than one shared by all: at this

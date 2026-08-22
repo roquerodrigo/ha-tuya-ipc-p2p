@@ -83,6 +83,9 @@ def test_the_encoder_produces_h264_over_mpeg_ts_at_a_fixed_rate():
     # what keeps stream time running at the speed of the clock.
     assert arguments[arguments.index("-f") + 1] == "mjpeg"
     assert arguments[arguments.index("-i") + 1] == "pipe:0"
+    # The camera declares a 4:3 pixel aspect ratio in its JPEG headers, which
+    # would have every player stretch a 640x480 frame to 16:9.
+    assert arguments[arguments.index("-vf") + 1] == "setsar=1"
 
 
 async def test_a_wrong_token_is_not_served(

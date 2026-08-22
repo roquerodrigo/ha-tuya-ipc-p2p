@@ -67,6 +67,14 @@ def encoder_arguments() -> list[str]:
         "baseline",
         "-pix_fmt",
         "yuv420p",
+        # The camera writes a JFIF density of 640x480 in "aspect ratio" units,
+        # which decodes as a pixel aspect ratio of 4:3 — so a 640x480 frame
+        # claims to be displayed at 16:9 and every player stretches it. The
+        # pixels are square; the header is wrong. Declaring that here is what
+        # keeps the picture 4:3, and snapshots never showed the fault because
+        # an <img> ignores the field entirely.
+        "-vf",
+        "setsar=1",
         "-bf",
         "0",
         "-g",
