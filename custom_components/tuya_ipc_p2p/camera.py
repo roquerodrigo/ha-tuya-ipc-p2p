@@ -7,7 +7,7 @@ import contextlib
 from typing import TYPE_CHECKING
 
 from aiohttp import web
-from homeassistant.components.camera import Camera
+from homeassistant.components.camera import Camera, CameraEntityFeature
 from homeassistant.helpers.event import async_call_later
 
 from .const import (
@@ -55,13 +55,15 @@ class TuyaIpcP2pCamera(TuyaIpcP2pEntity, Camera):
     """
     One Tuya IPC camera, served as MJPEG and JPEG snapshots.
 
-    The camera speaks MJPEG and nothing else, so no stream source is offered:
-    Home Assistant renders the MJPEG endpoint this entity serves directly,
-    which avoids the stream analysis an RTSP source of a couple of frames a
-    second never finishes.
+    The device speaks MJPEG and nothing else. This entity serves it directly
+    as multipart MJPEG, and additionally publishes a loopback URL as its
+    stream source, because every ffmpeg-based consumer — the HomeKit bridges
+    above all — is a separate process that can only be handed a URL, and
+    refuses a camera that offers none.
     """
 
     _attr_name = None
+    _attr_supported_features = CameraEntityFeature.STREAM
 
     def __init__(
         self,
@@ -100,6 +102,20 @@ class TuyaIpcP2pCamera(TuyaIpcP2pEntity, Camera):
     def is_on(self) -> bool:
         """Whether the camera is enabled; it has no power control of its own."""
         return True
+
+    async def stream_source(self) -> str | None:
+        """
+        Return the loopback URL an ffmpeg consumer can open.
+
+        The session is brought up here rather than when the consumer connects,
+        so a cold start overlaps with whatever the caller does next instead of
+        stalling its first read.
+        """
+        await self._async_ensure_streaming()
+        self._schedule_idle_shutdown()
+        return await self.coordinator.config_entry.runtime_data.stream_server.async_url(
+            self._device_id
+        )
 
     async def async_camera_image(
         self, width: int | None = None, height: int | None = None

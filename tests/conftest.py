@@ -43,6 +43,14 @@ def mock_api_client(camera_states, streams) -> Generator:
         yield instance
 
 
+@pytest.fixture(autouse=True)
+def mock_ffmpeg_manager():
+    """Home Assistant resolves the ffmpeg binary through its own integration."""
+    with patch("custom_components.tuya_ipc_p2p.get_ffmpeg_manager") as manager:
+        manager.return_value.binary = "ffmpeg"
+        yield manager
+
+
 @pytest.fixture
 def config_entry(hass):
     from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -70,3 +78,8 @@ async def setup_integration(
 @pytest.fixture
 def camera_stream(streams) -> FakeCameraStream:
     return streams[DEVICE_ID]
+
+
+@pytest.fixture
+def stream_server(setup_integration):
+    return setup_integration.runtime_data.stream_server

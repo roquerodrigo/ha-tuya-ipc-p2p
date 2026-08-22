@@ -6,7 +6,8 @@
   ],
   "config_flow": true,
   "dependencies": [
-    "camera"
+    "camera",
+    "ffmpeg"
   ],
   "documentation": "https://github.com/roquerodrigo/ha-tuya-ipc-p2p",
   "integration_type": "hub",

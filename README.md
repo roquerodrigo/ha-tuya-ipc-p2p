@@ -27,7 +27,7 @@ One device per camera, each with:
 
 | Entity | Platform | What it is |
 |---|---|---|
-| Camera | `camera` | MJPEG video and JPEG snapshots, straight from the device |
+| Camera | `camera` | Live video and JPEG snapshots, straight from the device |
 | Motion | `binary_sensor` | Motion derived from the frames the camera already sends |
 
 ## Install
@@ -111,10 +111,31 @@ call to the mobile gateway logs in and returns a server-coordinated P2P session;
 an SDP offer/answer is exchanged over MQTT; media then flows over a TCP relay
 that multiplexes KCP conversations, decrypting into JPEG frames.
 
-Home Assistant is handed those frames directly. The camera entity serves them
-as multipart MJPEG as they arrive, rather than through `stream`: a source of a
-couple of frames a second never finishes the analysis an RTSP or HLS pipeline
-does first.
+Home Assistant is handed those frames directly, and the camera entity serves
+them two ways. Its own preview and snapshots are the JPEGs as they arrive, with
+none of the analysis an RTSP source has to go through first. Everything built
+on ffmpeg — Home Assistant's HLS pipeline, the HomeKit bridges — gets a
+loopback URL instead, where the frames are encoded to H.264 on the fly.
+
+That transcode is not optional. These cameras only ever produce MJPEG, and
+handing MJPEG to those consumers produces an HLS playlist advertising
+`CODECS="mp4v"` that no browser decodes, and a HomeKit accessory with nothing
+to show. The loopback server also feeds the encoder at a fixed rate, repeating
+the last frame when the camera goes quiet: a JPEG sequence carries no
+timestamps, so without a declared rate the encoder invents one and playback
+runs several times faster than the clock.
+
+One encoder runs per connected consumer, and nothing is spawned — nor is any
+port bound — until something actually asks for a stream. At 640×480 and a
+couple of frames a second that costs very little.
+
+## HomeKit
+
+The camera publishes an H.264 stream source, so it can be added to HomeKit
+through Home Assistant's own HomeKit Bridge or any integration that builds on
+`stream`. Pair the motion sensor with it: HomeKit only offers **recording** for
+a camera that reports motion, and these cameras report none of their own — the
+`binary_sensor` this integration creates is what fills that gap.
 
 ## Troubleshooting
 
@@ -128,7 +149,10 @@ does first.
   session. Turn it off to share the camera.
 - **The picture stops and comes back.** Sessions end on transport close, a
   device disconnect or a stall; the SDK refetches a fresh config and starts
-  over with a backoff.
+  over with a backoff. A `close_reason=12` in the log is the device saying it
+  still holds the previous session; the next attempt gets it.
+- **HomeKit will not record.** HomeKit only offers recording for a camera that
+  reports motion — point the bridge at this integration's motion sensor.
 
 Attach the integration's diagnostics dump to any issue — it carries the entry,
 what the last poll saw and what each stream is doing, with the account and every

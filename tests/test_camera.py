@@ -179,3 +179,41 @@ async def test_a_viewer_still_watching_defers_the_idle_shutdown(
     await hass.async_block_till_done()
     assert stream.stop_calls == 0
     assert stream.running is True
+
+
+async def test_the_camera_offers_a_stream_source_for_ffmpeg_consumers(
+    hass, setup_integration, camera_stream, socket_enabled
+):
+    from homeassistant.components.camera import (
+        CameraEntityFeature,
+        async_get_stream_source,
+    )
+
+    state = hass.states.get(ENTITY_ID)
+    assert state.attributes["supported_features"] & CameraEntityFeature.STREAM
+
+    camera_stream.deliver(JPEG)
+    source = await async_get_stream_source(hass, ENTITY_ID)
+    assert source is not None
+    assert source.startswith("http://127.0.0.1:")
+
+
+async def test_asking_for_a_stream_source_brings_the_session_up(
+    hass, mock_api_client, streams, enable_custom_integrations, socket_enabled
+):
+    from homeassistant.components.camera import async_get_stream_source
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data=copy.deepcopy(ENTRY_DATA),
+        options={"keep_connected": False},
+        unique_id="user_example_com",
+    )
+    entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    stream = streams[DEVICE_ID]
+    assert stream.start_calls == 0
+    await async_get_stream_source(hass, ENTITY_ID)
+    assert stream.start_calls == 1

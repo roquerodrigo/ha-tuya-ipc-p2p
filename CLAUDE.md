@@ -63,7 +63,8 @@ Home Assistant travels SDK release first, bump pull request here second.
 config_flow.py    validates the account, discovers its cameras, creates the entry
 __init__.py       builds the client, the coordinator and one stream per camera
 coordinator.py    polls the account's device list; refreshes names, availability, local keys
-camera.py         one camera entity per camera: MJPEG and snapshots
+camera.py         one camera entity per camera: MJPEG, snapshots, stream source
+stream_server.py  loopback H.264 for the ffmpeg consumers that cannot take MJPEG
 binary_sensor.py  one motion sensor per camera
 entity.py         the shared base: device info, availability, the stream accessor
 api.py            the SDK boundary; nothing above it catches an SDK exception
@@ -97,6 +98,26 @@ the password did.
 While a session is up the vendor app cannot connect, and vice versa. That is
 what the `keep_connected` option trades, and why the on-demand path releases the
 session a minute after the last viewer leaves.
+
+### The stream source has to be H.264, and has to be paced
+
+The device only ever produces MJPEG. Home Assistant's own preview and snapshots
+take that as it is, but everything reached through `stream_source` is a
+separate ffmpeg process, and those consumers do not accept MJPEG: the HLS
+playlist comes out as `CODECS="mp4v"`, which no browser decodes, and a HomeKit
+accessory ends up with nothing to show. `stream_server.py` therefore encodes to
+H.264 over MPEG-TS on a loopback port.
+
+It feeds the encoder at a **fixed rate**, repeating the last frame when the
+camera goes quiet. A JPEG sequence carries no timestamps, so an encoder given
+frames as they happen invents a rate and stream time runs several times faster
+than the clock — the picture plays back at a sprint and HomeKit rejects what it
+did not negotiate.
+
+Nothing binds a port or spawns an encoder until `stream_source` is called, and
+one encoder runs per consumer rather than one shared by all: at this
+resolution and frame rate an encoder is cheap, and a late joiner gets a clean
+start instead of the middle of someone else's stream.
 
 ### `camera_stream`, not `stream`
 

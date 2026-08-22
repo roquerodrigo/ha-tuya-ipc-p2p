@@ -6,6 +6,7 @@ import asyncio
 from datetime import timedelta
 from typing import TYPE_CHECKING, cast
 
+from homeassistant.components.ffmpeg import get_ffmpeg_manager
 from homeassistant.const import CONF_SCAN_INTERVAL, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
@@ -20,6 +21,7 @@ from .const import (
 from .coordinator import TuyaIpcP2pDataUpdateCoordinator
 from .data import TuyaIpcP2pData
 from .options_flow import DEFAULT_MOTION_SENSITIVITY
+from .stream_server import TuyaIpcP2pStreamServer
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -57,18 +59,23 @@ async def async_setup_entry(
         device_ids=device_ids,
         config_entry=entry,
     )
+    streams = {
+        camera["device_id"]: client.create_stream(
+            device_id=camera["device_id"],
+            local_key=camera["local_key"],
+            motion_sensitivity=motion_sensitivity,
+        )
+        for camera in config["cameras"]
+    }
+    stream_server = TuyaIpcP2pStreamServer(
+        hass, streams, get_ffmpeg_manager(hass).binary
+    )
     entry.runtime_data = TuyaIpcP2pData(
         client=client,
         coordinator=coordinator,
         integration=async_get_loaded_integration(hass, entry.domain),
-        streams={
-            camera["device_id"]: client.create_stream(
-                device_id=camera["device_id"],
-                local_key=camera["local_key"],
-                motion_sensitivity=motion_sensitivity,
-            )
-            for camera in config["cameras"]
-        },
+        stream_server=stream_server,
+        streams=streams,
     )
 
     await coordinator.async_config_entry_first_refresh()
@@ -91,6 +98,7 @@ async def async_unload_entry(
     never released refuses the next offer until its own timer fires.
     """
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    await entry.runtime_data.stream_server.async_stop()
     await asyncio.gather(
         *(stream.async_close() for stream in entry.runtime_data.streams.values())
     )
