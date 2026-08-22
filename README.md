@@ -121,9 +121,11 @@ That transcode is not optional. These cameras only ever produce MJPEG, and
 handing MJPEG to those consumers produces an HLS playlist advertising
 `CODECS="mp4v"` that no browser decodes, and a HomeKit accessory with nothing
 to show. The loopback server also feeds the encoder at a fixed rate, repeating
-the last frame when the camera goes quiet: a JPEG sequence carries no
+the last frame when the camera goes quiet — a JPEG sequence carries no
 timestamps, so without a declared rate the encoder invents one and playback
-runs several times faster than the clock.
+runs several times faster than the clock — and forces square pixels, because
+the camera's JPEG headers claim a 4:3 pixel aspect ratio that would have every
+player stretch the picture to 16:9.
 
 One encoder runs per connected consumer, and nothing is spawned — nor is any
 port bound — until something actually asks for a stream. At 640×480 and a
