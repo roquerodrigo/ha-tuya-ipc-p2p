@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, patch
 
@@ -11,6 +10,7 @@ from tests.doubles import CAMERA_STATES, DEVICE_ID, ENTRY_DATA, FakeCameraStream
 
 if TYPE_CHECKING:
     from collections.abc import Generator
+    from pathlib import Path
 
 pytest_plugins = "pytest_homeassistant_custom_component"
 
