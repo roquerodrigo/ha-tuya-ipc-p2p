@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, patch
 
@@ -43,11 +44,34 @@ def mock_api_client(camera_states, streams) -> Generator:
         yield instance
 
 
+# An encoder that needs no ffmpeg on the machine running the tests. It records
+# its pid so a test can prove the process is reaped, and answers every read of
+# its stdin with a chunk that starts like an MPEG-TS packet.
+FAKE_ENCODER = """#!/usr/bin/env python3
+import os, pathlib, sys
+
+pathlib.Path(__file__ + ".pid").write_text(str(os.getpid()))
+out = sys.stdout.buffer
+while sys.stdin.buffer.read1(65536):
+    out.write(b"\\x47" + bytes(1879))
+    out.flush()
+"""
+
+
+@pytest.fixture
+def fake_encoder(tmp_path_factory) -> Path:
+    """Write the stand-in encoder and return the path to it."""
+    path = tmp_path_factory.mktemp("encoder") / "fake-encoder"
+    path.write_text(FAKE_ENCODER)
+    path.chmod(0o755)
+    return path
+
+
 @pytest.fixture(autouse=True)
-def mock_ffmpeg_manager():
-    """Home Assistant resolves the ffmpeg binary through its own integration."""
+def mock_ffmpeg_manager(fake_encoder):
+    """Home Assistant resolves the encoder binary through its ffmpeg integration."""
     with patch("custom_components.tuya_ipc_p2p.get_ffmpeg_manager") as manager:
-        manager.return_value.binary = "ffmpeg"
+        manager.return_value.binary = str(fake_encoder)
         yield manager
 
 
