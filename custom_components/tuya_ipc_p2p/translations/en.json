@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tuya account",
+        "description": "Sign in with the account the cameras belong to. Every device on it is probed once, and the ones that answer the IPC config API are imported as cameras.",
+        "data": {
+          "email": "Email",
+          "password": "Password",
+          "country_code": "Country code",
+          "region": "Region"
+        },
+        "data_description": {
+          "country_code": "The calling code of the account's country, without a plus sign — 1 for the US, 55 for Brazil.",
+          "region": "The Tuya data centre the account lives in."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "The Tuya cloud rejected the stored credentials. The cameras already configured are kept.",
+        "data": {
+          "email": "Email",
+          "password": "Password",
+          "country_code": "Country code",
+          "region": "Region"
+        }
+      },
+      "reconfigure": {
+        "title": "Tuya account",
+        "description": "Update the account and refresh the list of cameras it exposes.",
+        "data": {
+          "email": "Email",
+          "password": "Password",
+          "country_code": "Country code",
+          "region": "Region"
+        }
+      }
+    },
+    "error": {
+      "auth": "The email, password, country code or region is wrong.",
+      "connection": "Could not reach the Tuya cloud.",
+      "no_cameras": "No device on this account answers the IPC config API, so there is nothing to stream.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This account is already configured.",
+      "reauth_successful": "Re-authentication was successful.",
+      "reconfigure_successful": "The account was updated.",
+      "unique_id_mismatch": "The credentials belong to a different account."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "keep_connected": "Keep connected",
+          "motion_sensitivity": "Motion sensitivity",
+          "scan_interval": "Scan interval"
+        },
+        "data_description": {
+          "keep_connected": "Hold the camera session open so video and snapshots are ready instantly. These cameras serve one client at a time, so while this is on the Tuya app cannot connect to them. Turn it off to share a camera: the session then comes up on demand and is released a minute after the last viewer leaves.",
+          "motion_sensitivity": "How much a frame has to differ from the one before it to count as motion, as a multiple of the difference this camera shows when nothing is happening. Lower catches more and reports more false alarms.",
+          "scan_interval": "How often the account is polled for camera names, availability and rotated local keys. It does not affect the video, which is pushed."
+        }
+      }
+    }
+  },
+  "selector": {
+    "region": {
+      "options": {
+        "us": "United States",
+        "eu": "Europe",
+        "cn": "China",
+        "in": "India",
+        "we": "Western Europe"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "motion": {
+        "name": "Motion"
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Conta Tuya",
+        "description": "Entre com a conta à qual as câmeras pertencem. Cada dispositivo dela é consultado uma vez, e os que respondem à API de configuração IPC são importados como câmeras.",
+        "data": {
+          "email": "E-mail",
+          "password": "Senha",
+          "country_code": "Código do país",
+          "region": "Região"
+        },
+        "data_description": {
+          "country_code": "O código telefônico do país da conta, sem o sinal de mais — 1 para os EUA, 55 para o Brasil.",
+          "region": "O data center da Tuya em que a conta vive."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Entrar novamente",
+        "description": "A nuvem da Tuya rejeitou as credenciais salvas. As câmeras já configuradas são mantidas.",
+        "data": {
+          "email": "E-mail",
+          "password": "Senha",
+          "country_code": "Código do país",
+          "region": "Região"
+        }
+      },
+      "reconfigure": {
+        "title": "Conta Tuya",
+        "description": "Atualize a conta e refaça a lista de câmeras que ela expõe.",
+        "data": {
+          "email": "E-mail",
+          "password": "Senha",
+          "country_code": "Código do país",
+          "region": "Região"
+        }
+      }
+    },
+    "error": {
+      "auth": "O e-mail, a senha, o código do país ou a região está errado.",
+      "connection": "Não foi possível alcançar a nuvem da Tuya.",
+      "no_cameras": "Nenhum dispositivo desta conta responde à API de configuração IPC, então não há nada para transmitir.",
+      "unknown": "Erro inesperado."
+    },
+    "abort": {
+      "already_configured": "Esta conta já está configurada.",
+      "reauth_successful": "A reautenticação foi concluída.",
+      "reconfigure_successful": "A conta foi atualizada.",
+      "unique_id_mismatch": "As credenciais pertencem a outra conta."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções",
+        "data": {
+          "keep_connected": "Manter conectado",
+          "motion_sensitivity": "Sensibilidade de movimento",
+          "scan_interval": "Intervalo de atualização"
+        },
+        "data_description": {
+          "keep_connected": "Mantém a sessão da câmera aberta para que o vídeo e as fotos estejam prontos na hora. Estas câmeras atendem um cliente por vez, então, enquanto isto estiver ligado, o app da Tuya não consegue se conectar a elas. Desligue para compartilhar uma câmera: a sessão passa a subir sob demanda e é liberada um minuto depois que o último espectador sai.",
+          "motion_sensitivity": "O quanto um quadro precisa diferir do anterior para contar como movimento, como um múltiplo da diferença que esta câmera apresenta quando nada acontece. Valores menores detectam mais e geram mais alarmes falsos.",
+          "scan_interval": "Com que frequência a conta é consultada em busca de nomes, disponibilidade e chaves locais rotacionadas das câmeras. Não afeta o vídeo, que é enviado pela própria câmera."
+        }
+      }
+    }
+  },
+  "selector": {
+    "region": {
+      "options": {
+        "us": "Estados Unidos",
+        "eu": "Europa",
+        "cn": "China",
+        "in": "Índia",
+        "we": "Europa Ocidental"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "motion": {
+        "name": "Movimento"
+      }
+    }
+  }
+}

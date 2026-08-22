@@ -1,0 +1,19 @@
+{
+  "domain": "tuya_ipc_p2p",
+  "name": "Tuya IPC P2P",
+  "codeowners": [
+    "@roquerodrigo"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "camera"
+  ],
+  "documentation": "https://github.com/roquerodrigo/ha-tuya-ipc-p2p",
+  "integration_type": "hub",
+  "iot_class": "cloud_push",
+  "issue_tracker": "https://github.com/roquerodrigo/ha-tuya-ipc-p2p/issues",
+  "requirements": [
+    "tuya-ipc-p2p-sdk==0.1.0"
+  ],
+  "version": "0.1.0"
+}
