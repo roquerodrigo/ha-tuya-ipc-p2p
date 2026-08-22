@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import asyncio
+import os
+from pathlib import Path
 
 import aiohttp
 import pytest
@@ -42,15 +44,34 @@ async def test_an_unknown_camera_has_no_url(hass, setup_integration, stream_serv
     assert await stream_server.async_url("not-a-camera") is None
 
 
-async def test_the_stream_is_h264_inside_mpeg_ts(
+async def test_the_encoded_stream_reaches_the_consumer(
     hass, setup_integration, stream_server, socket_enabled, camera_stream
 ):
-    # Every consumer that matters wants H.264: handing them the camera's own
-    # MJPEG produces an HLS playlist no browser decodes.
     camera_stream.deliver(JPEG)
-    body = await _read_encoded(await stream_server.async_url(DEVICE_ID), 4096)
+    body = await _read_encoded(await stream_server.async_url(DEVICE_ID), 1880)
     assert body[0] == 0x47, "MPEG-TS packets start with the sync byte"
-    assert len(body) % 188 == 0 or len(body) > 188
+
+
+async def test_the_encoder_is_reaped_when_the_consumer_leaves(
+    hass, setup_integration, stream_server, socket_enabled, camera_stream, fake_encoder
+):
+    camera_stream.deliver(JPEG)
+    await _read_encoded(await stream_server.async_url(DEVICE_ID), 1880)
+
+    pid_file = Path(str(fake_encoder) + ".pid")
+    pid = int(pid_file.read_text())
+    async with asyncio.timeout(10):
+        while _is_alive(pid):
+            await asyncio.sleep(0.1)
+
+
+def _is_alive(pid: int) -> bool:
+    """Whether a process is still around, reaped children included."""
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError, PermissionError:
+        return False
+    return Path(f"/proc/{pid}/stat").read_text().split()[2] != "Z"
 
 
 def test_the_encoder_produces_h264_over_mpeg_ts_at_a_fixed_rate():
@@ -60,6 +81,7 @@ def test_the_encoder_produces_h264_over_mpeg_ts_at_a_fixed_rate():
     assert arguments[arguments.index("-framerate") + 1] == str(OUTPUT_FRAME_RATE)
     # A JPEG sequence carries no timestamps, so the declared input rate is
     # what keeps stream time running at the speed of the clock.
+    assert arguments[arguments.index("-f") + 1] == "mjpeg"
     assert arguments[arguments.index("-i") + 1] == "pipe:0"
 
 
