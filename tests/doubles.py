@@ -3,10 +3,20 @@
 from __future__ import annotations
 
 import asyncio
+from base64 import b64decode
 
 DEVICE_ID = "eb32bf0cd7c898317cxwf9"
 LOCAL_KEY = "0123456789abcdef"
-JPEG = b"\xff\xd8sample-frame\xff\xd9"
+
+# A real 64x48 JPEG, so the tests that run the encoder feed it something it
+# can actually decode rather than a placeholder that would make ffmpeg exit.
+JPEG = b64decode(
+    "/9j/4AAQSkZJRgABAgAAAQABAAD//gAQTGF2YzYyLjI4LjEwMgD/2wBDAAgoKC8oLzc3Nzc3"
+    "N0E8QUNDQ0FBQUFDQ0NISEhVVVVISEhDQ0hIUFBVVVxfXFdXVVdfX2RkZHh4c3OMjJGsrM//"
+    "xABKAAEAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAEAEAAAAAAAAAAAAAAAAA"
+    "AAAAEQEAAAAAAAAAAAAAAAAAAAAA/8AAEQgAMABAAwEiAAIRAAMRAP/aAAwDAQACEQMRAD8A"
+    "AAAAAAAAAAAAAAAAAAAAAAAA/9k="
+)
 
 ENTRY_DATA = {
     "email": "user@example.com",

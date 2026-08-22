@@ -14,6 +14,7 @@ package = false
 
 [dependency-groups]
 dev = [
+    "ha-ffmpeg==3.2.2",
     "homeassistant==2026.8.2",
     "pre-commit==4.6.1",
     "pytest==9.0.3",
@@ -99,4 +100,6 @@ max-complexity = 25
     "PLC0415",  # local imports inside fixtures are intentional
     "SLF001",   # testing private HA attrs and internal methods is intentional
     "PLR2004",  # magic numbers in test assertions are fine
+    "PLR0913",  # a scenario legitimately needs many fixtures
+    "PLR0917",  # same, counted as positional parameters
 ]
