@@ -5,7 +5,7 @@
 # directory as a managed project; ``[tool.uv] package = false`` keeps
 # uv from trying to build/install it.
 name = "ha-tuya-ipc-p2p"
-version = "1.0.0"
+version = "1.1.0"
 description = "Home Assistant integration for the native P2P video of Tuya IPC cameras"
 requires-python = ">=3.14.2"
 

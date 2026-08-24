@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.0.0...v1.1.0) (2026-08-24)
+
+
+### Features
+
+* **hacs:** ship the install zip with every release ([8ae3ce4](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/8ae3ce447c78e34694769ef614c1099122fd9e99))
+
+
+### Development Dependencies
+
+* **deps-dev:** bump the python-deps group across 1 directory with 5 updates ([23c5bb7](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/23c5bb72db40303d3778df6cc810d06652747f20))
+
+
+### Tests
+
+* **deps:** hold pytest at the version pytest-homeassistant-custom-component pins ([ec7bb72](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/ec7bb7222a5517d8de4c316a1256623a13f719bd))
+
 ## 1.0.0 (2026-08-22)
 
 
