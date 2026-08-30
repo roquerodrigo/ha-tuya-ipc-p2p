@@ -83,5 +83,11 @@
         "name": "Motion"
       }
     }
+  },
+  "issues": {
+    "needs_power_cycle": {
+      "title": "{camera} has stopped answering and needs to be power cycled",
+      "description": "`{camera}` is turning down every connection with its \"busy\" reply, which these cameras do after a run of failed attempts and keep doing for every client — the Tuya app cannot load the picture either. Nothing Home Assistant can do clears it: unplug the camera for a few seconds and plug it back in. Home Assistant is now retrying it slowly, and this notice disappears on its own once the camera streams again."
+    }
   }
 }

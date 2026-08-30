@@ -14,7 +14,7 @@
   "iot_class": "cloud_push",
   "issue_tracker": "https://github.com/roquerodrigo/ha-tuya-ipc-p2p/issues",
   "requirements": [
-    "tuya-ipc-p2p-sdk==0.1.0"
+    "tuya-ipc-p2p-sdk==0.1.1"
   ],
   "version": "1.1.0"
 }

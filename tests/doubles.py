@@ -41,6 +41,7 @@ class FakeCameraStream:
         self.running = False
         self.streaming = False
         self.motion_detected = False
+        self.needs_power_cycle = False
         self.last_frame: bytes | None = None
         self.viewer_count = 0
         self.start_calls = 0

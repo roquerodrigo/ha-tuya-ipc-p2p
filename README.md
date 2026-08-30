@@ -153,6 +153,13 @@ a camera that reports motion, and these cameras report none of their own — the
   device disconnect or a stall; the SDK refetches a fresh config and starts
   over with a backoff. A `close_reason=12` in the log is the device saying it
   still holds the previous session; the next attempt gets it.
+- **The camera needs a power cycle.** A run of those busy replies is a
+  different matter: after a dozen or so failed attempts these cameras stop
+  answering *any* client — the Tuya app cannot load the picture either — and
+  stay that way until the hardware is unplugged and plugged back in. The
+  integration raises a repair issue saying exactly that, and slows its retries
+  right down while it lasts, because offering every minute is what holds the
+  camera in that state. The issue withdraws itself once video returns.
 - **HomeKit will not record.** HomeKit only offers recording for a camera that
   reports motion — point the bridge at this integration's motion sensor.
 
