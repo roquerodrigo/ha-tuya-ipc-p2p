@@ -12,6 +12,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import TuyaIpcP2pApiClient
+from .camera_health import TuyaIpcP2pCameraHealth
 from .const import (
     CONF_MOTION_SENSITIVITY,
     DEFAULT_SCAN_INTERVAL_SECONDS,
@@ -20,6 +21,7 @@ from .const import (
 )
 from .coordinator import TuyaIpcP2pDataUpdateCoordinator
 from .data import TuyaIpcP2pData
+from .issues import async_clear_camera_issues
 from .options_flow import DEFAULT_MOTION_SENSITIVITY
 from .stream_server import TuyaIpcP2pStreamServer
 
@@ -80,6 +82,14 @@ async def async_setup_entry(
 
     await coordinator.async_config_entry_first_refresh()
 
+    # A camera that has stopped answering offers comes back only when someone
+    # power cycles it, so it is worth saying so where the user looks.
+    for camera in config["cameras"]:
+        health = TuyaIpcP2pCameraHealth(
+            hass, entry, streams[camera["device_id"]], camera["name"]
+        )
+        entry.async_on_unload(health.async_watch())
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
@@ -98,6 +108,7 @@ async def async_unload_entry(
     never released refuses the next offer until its own timer fires.
     """
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    async_clear_camera_issues(hass, entry, entry.runtime_data.streams)
     await entry.runtime_data.stream_server.async_stop()
     await asyncio.gather(
         *(stream.async_close() for stream in entry.runtime_data.streams.values())

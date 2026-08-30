@@ -22,7 +22,7 @@ dev = [
     "pytest-cov==7.1.0",
     "pytest-homeassistant-custom-component==0.13.356",
     "pyturbojpeg==2.5.0",
-    "tuya-ipc-p2p-sdk==0.1.0",
+    "tuya-ipc-p2p-sdk==0.1.1",
 ]
 lint = [
     "ruff==0.16.4",

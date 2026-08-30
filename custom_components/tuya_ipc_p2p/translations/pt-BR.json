@@ -83,5 +83,11 @@
         "name": "Movimento"
       }
     }
+  },
+  "issues": {
+    "needs_power_cycle": {
+      "title": "{camera} parou de responder e precisa ser reiniciada na tomada",
+      "description": "`{camera}` está recusando toda conexão com a resposta de \"ocupada\", o que essas câmeras passam a fazer depois de uma sequência de tentativas falhas — e passam a fazer para qualquer cliente: o app da Tuya também não carrega a imagem. Nada que o Home Assistant faça resolve: tire a câmera da tomada por alguns segundos e ligue de novo. O Home Assistant já reduziu o ritmo das tentativas, e este aviso some sozinho assim que a câmera voltar a transmitir."
+    }
   }
 }
