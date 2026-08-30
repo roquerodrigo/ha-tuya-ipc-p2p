@@ -59,17 +59,6 @@ Home Assistant travels SDK release first, bump pull request here second.
 
 ## Architecture
 
-```
-config_flow.py    validates the account, discovers its cameras, creates the entry
-__init__.py       builds the client, the coordinator and one stream per camera
-coordinator.py    polls the account's device list; refreshes names, availability, local keys
-camera.py         one camera entity per camera: MJPEG, snapshots, stream source
-stream_server.py  loopback H.264 for the ffmpeg consumers that cannot take MJPEG
-binary_sensor.py  one motion sensor per camera
-entity.py         the shared base: device info, availability, the stream accessor
-api.py            the SDK boundary; nothing above it catches an SDK exception
-```
-
 ### The video path does not go through the coordinator
 
 The coordinator polls the *cloud*, not the camera. Video is pushed: each
