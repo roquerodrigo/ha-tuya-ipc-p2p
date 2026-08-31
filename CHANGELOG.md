@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.1.0...v1.2.0) (2026-08-31)
+
+
+### Features
+
+* raise a repair issue for a camera that needs a power cycle ([d271ab7](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/d271ab740a85fa1efa443df649201ec3e8e98ef0))
+
+
+### Documentation
+
+* drop the module tree from CLAUDE.md ([91cd050](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/91cd050b45cae2e732f7b147dae7e8a86472b34e))
+
 ## [1.1.0](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.0.0...v1.1.0) (2026-08-24)
 
 
