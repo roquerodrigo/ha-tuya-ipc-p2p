@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.2.0...v1.2.1) (2026-09-02)
+
+
+### Documentation
+
+* add GitHub Sponsors button and support section ([24cb7cb](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/24cb7cbedc1b9d28797ce811cf39fe90de0e160f))
+
 ## [1.2.0](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.1.0...v1.2.0) (2026-08-31)
 
 
