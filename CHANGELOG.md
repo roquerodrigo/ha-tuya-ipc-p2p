@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.1](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.2.0...v1.2.1) (2026-09-22)
+
+
+### Development Dependencies
+
+* **deps-dev:** bump ruff ([582bd33](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/582bd33923c30907221dc3a1a10dc07f1c825bf2))
+* **deps-dev:** bump ruff in the python-deps group ([e49be33](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/e49be336c43c665a0ff8f185301258f61a850335))
+* **deps-dev:** bump ruff in the python-deps group ([dfdac9e](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/dfdac9ef7768d3da7af05afaa7fc77e55978f91a))
+
+
+### Documentation
+
+* add GitHub Sponsors button and support section ([24cb7cb](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/24cb7cbedc1b9d28797ce811cf39fe90de0e160f))
+
 ## [1.2.0](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.1.0...v1.2.0) (2026-08-31)
 
 
