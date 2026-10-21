@@ -1130,7 +1130,7 @@ wheels = [
 
 [[package]]
 name = "ha-tuya-ipc-p2p"
-version = "1.2.0"
+version = "1.2.1"
 source = { virtual = "." }
 
 [package.dev-dependencies]
