@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.2.0...v1.2.1) (2026-10-26)
+
+
+### Miscellaneous Chores
+
+* **release:** keep only user-facing changes in the changelog ([be0a2f4](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/commit/be0a2f4bff3ad471be1aeaad297e176b44accc76))
+
 ## [1.2.0](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.1.0...v1.2.0) (2026-08-31)
 
 
