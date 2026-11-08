@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.2.0...v1.2.1) (2026-11-08)
+
+### Bug fixes
+
+- When the Tuya cloud rate-limits logins, the integration now retries later instead of asking you to sign in again. ([#35](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/pull/35))
+
 ## [1.2.0](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.1.0...v1.2.0) (2026-08-31)
 
 
