@@ -1156,7 +1156,7 @@ dev = [
     { name = "pre-commit", specifier = "==4.7.0" },
     { name = "pytest-homeassistant-custom-component", specifier = "==0.13.356" },
     { name = "pyturbojpeg", specifier = "==2.6.1" },
-    { name = "tuya-ipc-p2p-sdk", specifier = "==0.1.1" },
+    { name = "tuya-ipc-p2p-sdk", specifier = "==0.1.3" },
 ]
 lint = [
     { name = "mypy", specifier = "==2.4.1" },
@@ -2784,16 +2784,16 @@ wheels = [
 
 [[package]]
 name = "tuya-ipc-p2p-sdk"
-version = "0.1.1"
+version = "0.1.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
     { name = "aiomqtt" },
     { name = "cryptography" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/56/c0/823dea84e41eff0bfd6bd042da57aeb7ceeedb904bd83e532f7a989842e6/tuya_ipc_p2p_sdk-0.1.1.tar.gz", hash = "sha256:da85d31cb09e02a064fbadff425c7d3ec61089183b5b8770661b4336138495fc", size = 150812, upload-time = "2026-08-31T01:26:49.71Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/15/43/e960498bf58c626ac495356c5df652e48c5cb4df97eba6e0e9609b7fa291/tuya_ipc_p2p_sdk-0.1.3.tar.gz", hash = "sha256:7951529cb88ad232ab833f2e24863b02e785eb355632dab6b954953552c3aeb4", size = 164131, upload-time = "2026-11-08T21:54:40.497Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b4/75/a5168faf2dbd1650dee3b79ce013c2a6d3e78317652d585b152e911b1415/tuya_ipc_p2p_sdk-0.1.1-py3-none-any.whl", hash = "sha256:1eaad617cd6f7ed6c25149b5406f49ebe3b4f06993628d34ef112cf0c7ad29cb", size = 66206, upload-time = "2026-08-31T01:26:48.655Z" },
+    { url = "https://files.pythonhosted.org/packages/2d/a0/93e9a097f5127ac7e6b02d30b64adfba320e87244fac125221582db23ecc/tuya_ipc_p2p_sdk-0.1.3-py3-none-any.whl", hash = "sha256:93f040fb8470ecf98f7184a5cab93dac844626b937ccb1c1095d4637ae5a74af", size = 66626, upload-time = "2026-11-08T21:54:39.488Z" },
 ]
 
 [[package]]
