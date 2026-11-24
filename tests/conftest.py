@@ -84,6 +84,7 @@ def config_entry(hass):
     entry = MockConfigEntry(
         domain=DOMAIN,
         data=copy.deepcopy(ENTRY_DATA),
+        title=ENTRY_DATA["email"],
         unique_id="user-example-com",
     )
     entry.add_to_hass(hass)

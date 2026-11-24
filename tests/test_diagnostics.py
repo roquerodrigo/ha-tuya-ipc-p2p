@@ -13,6 +13,12 @@ async def test_the_account_is_redacted(hass, setup_integration):
     assert diag["entry"]["data"]["country_code"] == "**REDACTED**"
 
 
+async def test_the_entry_title_is_redacted(hass, setup_integration):
+    diag = await async_get_config_entry_diagnostics(hass, setup_integration)
+    assert setup_integration.title == setup_integration.data["email"]
+    assert diag["entry"]["title"] == "**REDACTED**"
+
+
 async def test_every_camera_local_key_is_redacted(hass, setup_integration):
     diag = await async_get_config_entry_diagnostics(hass, setup_integration)
     for camera in diag["entry"]["data"]["cameras"]:
@@ -25,7 +31,6 @@ async def test_the_entry_metadata_is_included(hass, setup_integration):
     diag = await async_get_config_entry_diagnostics(hass, setup_integration)
     assert diag["entry"]["domain"] == "tuya_ipc_p2p"
     assert diag["entry"]["version"] == 1
-    assert "title" in diag["entry"]
     assert isinstance(diag["entry"]["options"], dict)
 
 
