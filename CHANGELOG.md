@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.2.1...v1.2.2) (2026-11-24)
+
+### Bug fixes
+
+- The diagnostics dump no longer exposes the Tuya account email, as the config entry title, which is that email, is now redacted. ([#42](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/pull/42))
+
 ## [1.2.1](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/compare/v1.2.0...v1.2.1) (2026-11-08)
 
 ### Bug fixes
