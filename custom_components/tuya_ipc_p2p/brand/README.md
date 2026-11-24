@@ -3,8 +3,8 @@
 Home Assistant 2026.3+ serves this directory directly, so these files are what
 every user sees — nothing is submitted to `home-assistant/brands` any more.
 
-The artwork is Tuya's own mark, shared with the other Tuya integrations in this
-fleet so they read as one family in the integrations list.
+The artwork is Tuya's own mark, shared with the author's other Tuya
+integrations so they read as one family in the integrations list.
 
 | File          | Shape                   | Size     |
 | ------------- | ----------------------- | -------- |

@@ -258,7 +258,7 @@ must stay green:
   `homeassistant` key. This is the third HA pin (see `CLAUDE.md`).
 - Brand assets live under `custom_components/tuya_ipc_p2p/brand/` —
   `icon.png`, `logo.png` (+ `@2x` variants) and `icon.svg`. They carry Tuya's
-  own mark, shared with the other Tuya integrations in this fleet. Home
+  own mark, shared with the author's other Tuya integrations. Home
   Assistant serves the directory directly; nothing is submitted upstream.
 - A `README.md` at the repo root is required; HACS surfaces it as the
   integration description. Its header follows the layout below.
