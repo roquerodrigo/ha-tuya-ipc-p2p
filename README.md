@@ -1,189 +1,220 @@
 # Tuya IPC P2P
 
+<!-- ha-marketplace:exclude-start -->
 [![CI](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/actions/workflows/ci.yml/badge.svg)](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/actions/workflows/ci.yml)
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![GitHub release](https://img.shields.io/github/v/release/roquerodrigo/ha-tuya-ipc-p2p)](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/releases/latest)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-db61a2?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/roquerodrigo)
 
-[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-db61a2?logo=githubsponsors&logoColor=white&style=for-the-badge)](https://github.com/sponsors/roquerodrigo)
+[![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=roquerodrigo&repository=ha-tuya-ipc-p2p&category=integration)
+<!-- ha-marketplace:exclude-end -->
 
-[![Open your Home Assistant instance and open the repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=roquerodrigo&repository=ha-tuya-ipc-p2p&category=integration)
+Watch your Tuya and Smart Life cameras in Home Assistant, including the ones
+the official Tuya integration cannot stream. Pet feeders and other low-cost
+Tuya cameras often have no cloud RTSP link, so the official integration shows
+no picture for them. This integration opens the same peer-to-peer video
+session the Tuya app uses, and gives you live video, snapshots and a motion
+sensor for each camera. The protocol lives in the companion library
+[tuya-ipc-p2p-sdk](https://github.com/roquerodrigo/tuya-ipc-p2p-sdk).
 
----
+This is an unofficial integration. It is not affiliated with or supported by
+Tuya, and it uses the same cloud API and video protocol as the Tuya app, which
+Tuya can change at any time.
 
-Home Assistant integration for the **native P2P video** of Tuya IPC cameras — the
-path the vendor app uses, spoken directly. No vendor SDK, no external process
-and no cloud RTSP: Home Assistant logs in, negotiates the session, decrypts the
-media and gets MJPEG video and JPEG snapshots.
+## Features
 
-The official Tuya integration streams these cameras over a cloud RTSP link,
-which several devices — pet feeders and other low-cost IPC hardware among
-them — do not offer. This integration speaks the P2P protocol those devices
-*do* answer.
+- See live video and snapshots from every camera on your Tuya account, added
+  automatically when you sign in.
+- Get a motion sensor for each camera, even though these cameras report no
+  motion of their own. Use it in automations, or to let HomeKit record.
+- Add the cameras to HomeKit through the HomeKit Bridge, and play them in any
+  dashboard card that uses Home Assistant's video stream.
+- Choose between instant video and sharing the camera with the Tuya app.
+- Get a repair notice when a camera stops answering and has to be unplugged.
 
-> ⚠️ **Unofficial.** Not affiliated with, endorsed by or supported by Tuya. It
-> targets the mobile API gateway and the P2P protocol their app uses; the
-> vendor can change either side at any time.
+## Requirements
 
-## Entities
+- Home Assistant 2026.8.2 or newer.
+- A Tuya or Smart Life account that signs in with an email and a password,
+  with the cameras added to it.
+- Internet access for Home Assistant. The account, the camera list and the
+  video all go through Tuya's cloud.
 
-One device per camera, each with:
+<!-- ha-marketplace:exclude-start -->
+## Installation
 
-| Entity | Platform | What it is |
-|---|---|---|
-| Camera | `camera` | Live video and JPEG snapshots, straight from the device |
-| Motion | `binary_sensor` | Motion derived from the frames the camera already sends |
+### Home Assistant Marketplace (recommended)
 
-## Install
+1. Select the **Open your Home Assistant instance** button above, or go to
+   **Settings → Marketplace**, select **Add from link** in the upper right
+   corner, enter `roquerodrigo/ha-tuya-ipc-p2p` and select **Add**.
+2. Select **Install**.
+3. Restart Home Assistant.
 
-Through [HACS](https://hacs.xyz/): add this repository as a custom repository
-of category **Integration**, install it, and restart Home Assistant. Then add
-**Tuya IPC P2P** from **Settings → Devices & services**.
+The Marketplace comes with Home Assistant 2026.11 and later. On older
+versions, add this repository to HACS as a custom repository of type
+**Integration** and install it from there.
 
-## Configure
+### Manual
 
-The flow asks for the account the cameras belong to:
+1. Download `tuya_ipc_p2p.zip` from the
+   [latest release](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/releases/latest).
+2. Extract it into `config/custom_components/tuya_ipc_p2p/`.
+3. Restart Home Assistant.
+<!-- ha-marketplace:exclude-end -->
 
-| Field | What to enter |
-|---|---|
-| Email | The Tuya / Smart Life account email |
-| Password | Its password |
-| Country code | The calling code of the account's country, without a plus sign — `1` for the US, `55` for Brazil |
-| Region | The Tuya data centre the account lives in (`us` by default) |
+## Configuration
 
-Every device on the account is then probed once, and the ones that answer the
-IPC config API are imported as cameras. Nothing has to be copied out of the app
-by hand: the device ids and local keys come from the account.
+Go to **Settings → Devices & services → Add integration**, search for
+**Tuya IPC P2P** and sign in with the account the cameras belong to.
 
-The camera list is stored on the config entry rather than rediscovered on every
-restart, because the probe is one cloud call per device on the account. When a
-camera is added or removed, run **Reconfigure** from the integration's
-three-dot menu to refresh it.
+| Field        | What to enter                                                                  | Default       |
+|--------------|--------------------------------------------------------------------------------|---------------|
+| Email        | The email you use to sign in to the Tuya or Smart Life app                     |               |
+| Password     | The password of that account                                                   |               |
+| Country code | The calling code of the account's country, without the plus sign: 1 for the US, 55 for Brazil |  |
+| Region       | The Tuya data center of the account: United States, Europe, Western Europe, China or India | United States |
+
+Home Assistant then checks every device on the account once and adds the ones
+that answer as cameras. Setup fails if none of them does.
+
+The camera list is kept, not checked again at every restart. When you add a
+camera to the account or remove one, open the integration and select
+**Reconfigure** to refresh the list. Reconfigure also lets you change the
+password, country code or region, as long as you sign in to the same account.
+After a camera leaves the list, you can delete its device from the device
+page.
+
+If Tuya stops accepting the stored password, Home Assistant asks you to sign
+in again. Your cameras are kept.
 
 ## Options
 
-| Option | Default | What it does |
-|---|---|---|
-| Keep connected | on | Holds the camera session open so video and snapshots are ready instantly |
-| Motion sensitivity | 6 | How far above typical a frame has to land to count as motion |
-| Scan interval | 300 s | How often the account is polled for camera names, availability and rotated local keys |
+Open the integration and select **Configure**. Changes apply right away.
 
-**Cameras serve one client at a time.** While this integration holds a session
-the vendor app cannot connect to that camera, and while the app holds it the
-integration cannot. That is what **Keep connected** trades: with it on, video is
-ready the instant it is asked for; with it off, the session comes up on demand
-and is released a minute after the last viewer leaves, so the Tuya app can have
-the camera back.
+| Option             | Default | Range                     | Effect |
+|--------------------|---------|---------------------------|--------|
+| Keep connected     | On      | On or off                 | Keeps each camera connected, so video and snapshots are ready instantly. While it is on, the Tuya app cannot connect to the cameras. |
+| Motion sensitivity | 6       | 1 to 60, in steps of 0.5  | How much a frame has to stand out from a quiet scene to count as motion. Lower catches more and gives more false alarms. |
+| Scan interval      | 300 s   | 60 s or more              | How often the account is checked for camera names, online state and new keys. It does not affect the video. |
 
-Bringing a cold session up takes several seconds — login, signaling, relay, the
-channel-0 handshake — so with **Keep connected** off the first snapshot after an
-idle period answers with the last frame the camera produced while the session
-comes up behind it.
+These cameras accept one connection at a time. With **Keep connected** off, Home
+Assistant connects when you open the camera and lets go of it a minute after
+the last viewer leaves, so the Tuya app can use it again. The first snapshot
+after an idle period shows the last picture the camera sent while it
+reconnects, which takes several seconds.
 
-The scan interval does not affect the video, which the camera pushes.
+## Entities
 
-## Motion
+Each camera becomes a device with the name it has in the Tuya app.
 
-These cameras report no motion of their own. A JPEG is only as large as its
-content is complex, so how much each frame differs in size from the one before
-it is a direct measure of how much the scene changed — and it costs nothing,
-because the frames arrive either way.
+| Entity      | Type          | Shows                  | Notes |
+|-------------|---------------|------------------------|-------|
+| Camera name | Camera        | Live video, snapshots  | Also offers a video stream for HomeKit and dashboard cards |
+| Motion      | Binary sensor | Detected or Clear      | Stays on for 12 seconds after the last movement. Unavailable while the camera is not connected. |
 
-Measured against a still scene on real hardware, consecutive frames differ by
-0.2 % in daylight and 0.41 % at night, where sensor noise is higher. The typical
-difference is tracked continuously rather than fixed, so the threshold follows
-the camera from day into night, and **Motion sensitivity** sets how far above
-typical a frame has to land. Two frames in a row have to exceed it: anything
-really moving stays in shot longer than one frame, while the camera's own
-exposure adjustments show up as a single frame that differs sharply from both
-its neighbours.
-
-It cannot tell a cat from the lights coming on. On a still scene at night — the
-noisiest case — the default settles at about one event every ten minutes; raise
-the sensitivity if that is too eager.
-
-Motion is read from the frames a session delivers, so the sensor is unavailable
-while the camera is not connected. With **Keep connected** on, that is only
-while the camera itself is unreachable.
+Both entities are unavailable while the Tuya account reports the camera as
+offline.
 
 ## How it works
 
-The protocol lives in the companion SDK,
-[`tuya-ipc-p2p-sdk`](https://github.com/roquerodrigo/tuya-ipc-p2p-sdk), which
-this integration pins exactly in `manifest.json`. In short: a signed, encrypted
-call to the mobile gateway logs in and returns a server-coordinated P2P session;
-an SDP offer/answer is exchanged over MQTT; media then flows over a TCP relay
-that multiplexes KCP conversations, decrypting into JPEG frames.
+Home Assistant signs in to your Tuya account and checks it at every scan
+interval for the name and online state of each camera. When you re-pair a
+camera, it gets a new key, and Home Assistant picks it up on the next check.
+If Tuya's cloud stops answering for less than five minutes, your cameras keep
+their last known state instead of turning unavailable.
 
-Home Assistant is handed those frames directly, and the camera entity serves
-them two ways. Its own preview and snapshots are the JPEGs as they arrive, with
-none of the analysis an RTSP source has to go through first. Everything built
-on ffmpeg — Home Assistant's HLS pipeline, the HomeKit bridges — gets a
-loopback URL instead, where the frames are encoded to H.264 on the fly.
+The video does not depend on that check. Each camera sends its pictures
+through Tuya's relay as soon as it is connected, and Home Assistant decrypts
+them. The camera produces a sequence of JPEG pictures and no sound. For
+HomeKit and for players that need H.264 video, Home Assistant converts the
+pictures with its own ffmpeg, only while something is watching and only on an
+address that other computers cannot reach.
 
-That transcode is not optional. These cameras only ever produce MJPEG, and
-handing MJPEG to those consumers produces an HLS playlist advertising
-`CODECS="mp4v"` that no browser decodes, and a HomeKit accessory with nothing
-to show. The loopback server also feeds the encoder at a fixed rate, repeating
-the last frame when the camera goes quiet — a JPEG sequence carries no
-timestamps, so without a declared rate the encoder invents one and playback
-runs several times faster than the clock — and forces square pixels, because
-the camera's JPEG headers claim a 4:3 pixel aspect ratio that would have every
-player stretch the picture to 16:9.
+When the connection drops, Home Assistant reconnects on its own, waiting a
+little longer after each failed attempt.
 
-One encoder runs per connected consumer, and nothing is spawned — nor is any
-port bound — until something actually asks for a stream. At 640×480 and a
-couple of frames a second that costs very little.
-
-## HomeKit
-
-The camera publishes an H.264 stream source, so it can be added to HomeKit
-through Home Assistant's own HomeKit Bridge or any integration that builds on
-`stream`. Pair the motion sensor with it: HomeKit only offers **recording** for
-a camera that reports motion, and these cameras report none of their own — the
-`binary_sensor` this integration creates is what fills that gap.
+The cameras report no motion, so the motion sensor reads it from the pictures.
+A picture of a busy scene takes more space than a picture of a quiet one, so
+the sensor compares the size of each picture with the one before. It learns
+how much a quiet scene varies, following the camera from day into night, and
+turns on when two pictures in a row stand out by more than **Motion
+sensitivity** times that amount.
 
 ## Troubleshooting
 
-- **No camera found during setup.** Only devices that answer the IPC config API
-  are imported. A camera the Tuya app streams over cloud RTSP rather than P2P
-  will not appear.
-- **The camera is unavailable.** The account reports it offline. Nothing this
-  integration does can bring a session up against hardware that is not on the
-  network.
-- **The Tuya app cannot connect.** That is **Keep connected** holding the
-  session. Turn it off to share the camera.
-- **The picture stops and comes back.** Sessions end on transport close, a
-  device disconnect or a stall; the SDK refetches a fresh config and starts
-  over with a backoff. A `close_reason=12` in the log is the device saying it
-  still holds the previous session; the next attempt gets it.
-- **The camera needs a power cycle.** A run of those busy replies is a
-  different matter: after a dozen or so failed attempts these cameras stop
-  answering *any* client — the Tuya app cannot load the picture either — and
-  stay that way until the hardware is unplugged and plugged back in. The
-  integration raises a repair issue saying exactly that, and slows its retries
-  right down while it lasts, because offering every minute is what holds the
-  camera in that state. The issue withdraws itself once video returns.
-- **HomeKit will not record.** HomeKit only offers recording for a camera that
-  reports motion — point the bridge at this integration's motion sensor.
+**Sign-in fails with "The email, password, country code or region is wrong".**
+Check that the country code has no plus sign and that the region is the one
+your account was created in.
 
-Attach the integration's diagnostics dump to any issue — it carries the entry,
-what the last poll saw and what each stream is doing, with the account and every
-local key redacted.
+**Setup says no device on the account answers.** None of the devices on the
+account answered as a camera this integration can stream. Check that you
+signed in with the account the cameras belong to.
 
-## Development
+**A camera I added to the account does not appear.** The camera list is only
+refreshed when you select **Reconfigure** on the integration.
 
-```bash
-scripts/setup      # create the .venv
-scripts/develop    # run Home Assistant with the integration loaded
-scripts/lint       # ruff format, ruff check, mypy, pytest
-```
+**The camera is unavailable.** The Tuya account reports it as offline. Check
+that it has power and Wi-Fi.
 
-Conventions live in [`CODE_STYLE.md`](./CODE_STYLE.md); architectural notes for
-agents in [`CLAUDE.md`](./CLAUDE.md).
+**The motion sensor is unavailable.** Motion is only known while the camera is
+connected. With **Keep connected** off, that is only while someone is
+watching it.
+
+**The Tuya app cannot connect to the camera.** **Keep connected** is holding
+the camera. Turn it off to share the camera with the app.
+
+**The picture stops and comes back.** The connection dropped and Home
+Assistant reconnected. A log line with `close_reason=12` means the camera
+was still holding the previous connection, and a later attempt gets through.
+
+**A repair says the camera needs to be power cycled.** After 10 refused
+attempts in a row, these cameras stop answering anyone, the Tuya app included,
+until they are unplugged. Unplug the camera for a few seconds and plug it back
+in. Meanwhile Home Assistant only tries again every 15 minutes, and the notice
+goes away once video returns.
+
+**Motion triggers too often, or misses movement.** Raise **Motion
+sensitivity** to get fewer false alarms, or lower it to catch more. The sensor
+cannot tell a cat from the lights coming on.
+
+**HomeKit does not offer recording.** HomeKit only records cameras that have a
+motion sensor. In the HomeKit Bridge options for the camera, link it to the
+camera's **Motion** sensor.
+
+**Something else is wrong.** Download the diagnostics from the integration's
+menu and attach them to an
+[issue](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/issues), along with
+the log after you select **Enable debug logging** on the integration. The
+email, password, country code and camera keys are removed from the
+diagnostics.
+
+## Known limitations
+
+- A camera accepts one connection at a time, so Home Assistant and the Tuya
+  app cannot use it at the same time.
+- Video only, with no sound and no camera controls.
+- The motion sensor reacts to any change in the picture, not only to people or
+  animals.
+- Tuya can change its cloud API or the video protocol at any time, which can
+  break the integration until it is updated.
 
 ## Support
 
-This integration is built and maintained on personal time, on hardware bought for the purpose. If it is useful to you, consider [sponsoring the work](https://github.com/sponsors/roquerodrigo) — it keeps the devices, the testing and the releases coming.
+This integration is built and maintained on personal time, on hardware bought
+for the purpose. If it is useful to you, consider
+[sponsoring the work](https://github.com/sponsors/roquerodrigo). It keeps the
+devices, the testing and the releases coming.
+
+Report bugs and request features on the
+[issue tracker](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/issues).
+
+<!-- ha-marketplace:exclude-start -->
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development setup and
+workflow, and [CODE_STYLE.md](CODE_STYLE.md) for the code conventions.
 
 ## License
 
-MIT — see [`LICENSE`](./LICENSE).
+[MIT](LICENSE)
+<!-- ha-marketplace:exclude-end -->
