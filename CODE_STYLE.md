@@ -40,9 +40,10 @@ run `uv run ruff format --check .`, `uv run ruff check .` and
   alongside the re-exports (`JsonPrimitive`, `JsonValue`, `JsonObject`,
   `TuyaIpcP2pConfigEntry`), not in their own files.
 - **Helper functions** may live in the same file as the single class that uses
-  them (e.g. `_verify_response_or_raise` in `api.py`).
+  them (e.g. `_bound_port` in `stream_server.py`).
 - **`__init__.py` of the integration package** wires `async_setup_entry`,
-  `async_unload_entry`, `async_reload_entry` and nothing else.
+  `async_unload_entry`, `async_reload_entry`,
+  `async_remove_config_entry_device` and nothing else.
 
 ## Entities: one class per entity
 
@@ -179,8 +180,7 @@ with a one-line comment explaining the deliberate narrowing — see
 - Format: `"Failed to <verb> <object>: <cause>"` where `<cause>` is the
   exception or a short reason. Keep them short and grep-able.
 - Pre-validate inputs before the network call so user-facing errors point at
-  the bad input, not a downstream traceback (`config_flow._validate` rejects
-  malformed credentials before contacting the API).
+  the bad input, not a downstream traceback.
 - Custom exceptions get the same hierarchy:
   `TuyaIpcP2pApiClientError` (base) → `…CommunicationError` (timeout,
   connection, DNS) and `…AuthenticationError` (401/403). Wrap raw upstream
@@ -269,38 +269,38 @@ the five most recent GitHub releases to users, so keep the changelog grep-able.
 
 ## README header
 
-Every repository opens `README.md` with the same header, in this exact order:
-**title → badges → HACS link → `---` separator → the rest of the document.**
+Every repository opens `README.md` with the same header: the title, then the
+badges and the "Open your Home Assistant instance" button wrapped in the
+Home Assistant Marketplace exclusion markers, so the Marketplace page hides
+them and GitHub shows them.
 
 ```markdown
 # <Title>
 
+<!-- ha-marketplace:exclude-start -->
 [![CI](https://github.com/roquerodrigo/<repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/roquerodrigo/<repo>/actions/workflows/ci.yml)
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![GitHub release](https://img.shields.io/github/v/release/roquerodrigo/<repo>)](https://github.com/roquerodrigo/<repo>/releases/latest)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-db61a2?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/roquerodrigo)
 
-[![Open your Home Assistant instance and open the repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=roquerodrigo&repository=<repo>&category=integration)
-
----
+[![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=roquerodrigo&repository=<repo>&category=integration)
+<!-- ha-marketplace:exclude-end -->
 ```
 
 - `owner=` is always `roquerodrigo`; `repository=` is the repository name.
 - `category=integration` for an integration; `category=plugin` for a Lovelace
   card repository.
-- The HACS link is a paragraph of its own, separated from the badge block by a
-  blank line. The badge row and the "Open your Home Assistant instance" button
-  are different things and must not run together.
-- Preserve the badges a repository already carries and invent no new ones; all
-  of them belong **before** the HACS link.
-- The `---` immediately after the HACS link is the header separator. A README
-  that already uses `---` further down keeps those as section breaks — do not
-  add a second separator to the header.
+- The `hacs_repository` redirect opens HACS before Home Assistant 2026.11 and
+  the Marketplace from 2026.11 on.
+- No `---` separator after the header: the Marketplace hides the badges, so
+  the line would open the page.
+- Installation, Contributing and License are wrapped in the same markers.
+  Headings get no ids in the Marketplace, so visible text never relies on an
+  in-page `#anchor` link.
 
-**A private repository gets no HACS link.** `my.home-assistant.io` resolves the
-target through the public GitHub API, so on a private repository the button
-lands on something HACS cannot install. It is the same reason the catalog checks
-skip those repositories. Ship the title, the badges and
-the separator, and add the link when — and only when — the repository is made
-public.
+**A private repository gets no "Open your Home Assistant instance" button.**
+`my.home-assistant.io` resolves the target through the public GitHub API, so
+on a private repository the button lands on something that cannot be
+installed. Add it when, and only when, the repository is made public.
 
 ## Quality scale
 

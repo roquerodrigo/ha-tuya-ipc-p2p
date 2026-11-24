@@ -1,55 +1,67 @@
-# Contribution guidelines
+# Contributing
 
-Contributing to this project should be as easy and transparent as possible, whether it's:
+Bug reports, ideas and pull requests are welcome.
 
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
+## Reporting a bug
 
-## Github is used for everything
+Open an [issue](https://github.com/roquerodrigo/ha-tuya-ipc-p2p/issues/new/choose)
+with:
 
-Github is used to host code, to track issues and feature requests, as well as accept pull requests.
+- the Home Assistant version, the integration version and the camera model;
+- what you did, what you expected and what happened;
+- the diagnostics downloaded from the integration's menu (the account and the
+  camera keys are redacted) and the debug log of the problem.
 
-Pull requests are the best way to propose changes to the codebase.
+## Where the code lives
 
-1. Fork the repo and create your branch from `main`.
-2. If you've changed something, update the documentation.
-3. Make sure your code lints (run `uv run ruff format --check .`, `uv run ruff check .` and `uv run mypy custom_components/tuya_ipc_p2p`).
-4. Test your contribution.
-5. Issue that pull request!
+The Tuya protocol (sign-in, signaling, relay, decryption and motion detection)
+lives in the companion library
+[tuya-ipc-p2p-sdk](https://github.com/roquerodrigo/tuya-ipc-p2p-sdk). This
+repository holds the Home Assistant side: the config flow, the entities and
+their lifecycle. A fix in the protocol is released in the library first, then
+brought here by a pull request that bumps the pinned version in
+`manifest.json` and `pyproject.toml` together.
 
-## Any contributions you make will be under the MIT Software License
+## Development setup
 
-In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
+The project uses [uv](https://docs.astral.sh/uv/).
 
-## Report bugs using Github's [issues](../../issues)
+```bash
+scripts/setup      # install the dependencies into .venv
+scripts/develop    # run Home Assistant at http://localhost:8123 with this integration loaded
+```
 
-GitHub issues are used to track public bugs.
-Report a bug by [opening a new issue](../../issues/new/choose); it's that easy!
+`scripts/develop` uses the configuration in [`config/`](config/), with debug
+logging on for the integration.
 
-## Write bug reports with detail, background, and sample code
+## Checks
 
-**Great Bug Reports** tend to have:
+Run these before opening a pull request. CI runs the same ones, and
+`pre-commit install` runs the first three on every commit.
 
-- A quick summary and/or background
-- Steps to reproduce
-  - Be specific!
-  - Give sample code if you can.
-- What you expected would happen
-- What actually happens
-- Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
+```bash
+uv run ruff format .                         # format
+uv run ruff check . --fix                    # lint
+uv run mypy custom_components/tuya_ipc_p2p   # type-check
+uv run pytest                                # tests, coverage must stay at 90 % or more
+```
 
-## Use a Consistent Coding Style
+`scripts/lint` runs the same four checks without changing any file, as CI
+does.
 
-The project uses [ruff](https://docs.astral.sh/ruff/) (config in `pyproject.toml`). Run `uv run ruff format --check .`, `uv run ruff check .` and `uv run mypy custom_components/tuya_ipc_p2p` before sending a PR.
+Read [CODE_STYLE.md](CODE_STYLE.md) before adding or restructuring code.
 
-## Test your code modification
+## Pull requests
 
-The protocol this integration speaks lives in the companion SDK, [tuya-ipc-p2p-sdk](https://github.com/roquerodrigo/tuya-ipc-p2p-sdk).
-
-Run `scripts/setup` once to create the `uv`-managed virtual environment, then `scripts/develop` to start a stand-alone Home Assistant instance in debug mode with the integration loaded and the included [`configuration.yaml`](./config/configuration.yaml) file.
+1. Fork the repository and branch from `main`.
+2. Write commit messages as [Conventional Commits](https://www.conventionalcommits.org/).
+   Releases and their notes are generated from them. Mark breaking changes
+   with `!` or a `BREAKING CHANGE:` footer.
+3. Update `translations/en.json` and `translations/pt-BR.json` together when
+   you change user-facing strings. The tests fail if their keys differ.
+4. Update the README when behaviour, configuration or entities change.
+5. Fill in the pull request template.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under its MIT License.
+Contributions are released under the project's [MIT License](LICENSE).
