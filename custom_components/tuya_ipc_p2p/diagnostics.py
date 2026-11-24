@@ -7,8 +7,6 @@ from typing import TYPE_CHECKING, cast
 from homeassistant.components.diagnostics import async_redact_data
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping
-
     from homeassistant.core import HomeAssistant
 
     from .data import (
@@ -20,9 +18,10 @@ if TYPE_CHECKING:
     )
 
 # The local key is what encrypts the signaling and derives the channel-0
-# credential, so it belongs in a dump no more than the password does.
+# credential, so it belongs in a dump no more than the password does. The entry
+# title is the account email.
 TO_REDACT: frozenset[str] = frozenset(
-    {"email", "password", "country_code", "local_key"}
+    {"title", "email", "password", "country_code", "local_key"}
 )
 
 
@@ -31,21 +30,19 @@ async def async_get_config_entry_diagnostics(
     entry: TuyaIpcP2pConfigEntry,
 ) -> TuyaIpcP2pDiagnosticsPayload:
     """Return diagnostics for a config entry."""
-    redacted_data = cast(
-        "Mapping[str, str]",
-        async_redact_data(dict(entry.data), set(TO_REDACT)),
+    diag_entry = cast(
+        "TuyaIpcP2pDiagnosticsEntry",
+        async_redact_data(
+            {
+                "title": entry.title,
+                "version": entry.version,
+                "domain": entry.domain,
+                "data": dict(entry.data),
+                "options": dict(entry.options),
+            },
+            set(TO_REDACT),
+        ),
     )
-    redacted_options = cast(
-        "Mapping[str, str | int]",
-        async_redact_data(dict(entry.options), set(TO_REDACT)),
-    )
-    diag_entry: TuyaIpcP2pDiagnosticsEntry = {
-        "title": entry.title,
-        "version": entry.version,
-        "domain": entry.domain,
-        "data": redacted_data,
-        "options": redacted_options,
-    }
     streams: dict[str, TuyaIpcP2pStreamDiagnostics] = {
         device_id: {
             "running": stream.running,
